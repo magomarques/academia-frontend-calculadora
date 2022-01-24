@@ -1,25 +1,150 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
 
-function App() {
+export default function App() {
+
+  const [valorTela, setValorTela] = useState('');
+  const [resultado, setResultado] = useState(0);
+  const [acumulador, setAcumulador] = useState(0);
+  const [operado, setOperado] = useState(false);
+
+  // COMPONENTES:
+  const Tela = (valor, res) => {
+    return(
+      <div style={cssTela}>
+        <span style={cssTelaOper}>{valor}</span>
+        <span style={cssTelaRes}>{res}</span>
+      </div>
+
+    )
+  }
+
+  const Btn = (label, onClick) => {
+    return(
+      <button style={cssBtn} onClick={onClick}>{label}</button>
+    )
+  }
+
+  // FUNÇÕES:
+  const addDigitoTela = (d) => {
+    if ((d=='+' || d=='-' || d=='*' || d=='/') && operado) {
+      setOperado(false)
+      setValorTela(resultado + d)
+      return
+    }
+    if (operado){
+      setValorTela(d)
+      setOperado(false)
+      return
+    }
+    const valorDiditadoTela = valorTela + d
+    setValorTela(valorDiditadoTela)
+  }
+
+  const limparMemoria = () => {
+    setOperado(false)
+    setValorTela('')
+    setResultado(0)
+    setAcumulador(0)
+  }
+
+  const Operacao = (oper) => {
+    if (oper=='bs') {
+      let vtela = valorTela
+      vtela = vtela.substring(0, (vtela.length - 1))
+      setValorTela(vtela)
+      setOperado(false)
+      return
+    }
+    try {
+      const r = eval(valorTela)
+      setAcumulador(r)
+      setResultado(r)
+      setOperado(true)
+    } catch {
+      setResultado('ERRO')
+    }
+  }
+
+  // ESTILOS:
+  const cssConteiner = {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'column',
+    width: 300,
+    border: '1px solid #000',
+    marginTop: 50,
+    marginLeft: 450
+  }
+
+  const cssBotoes = {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  }
+
+  const cssTela = {
+    display: 'flex',
+    paddingLeft: 20,
+    paddingRigth: 20,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    backgrounColor: '#444',
+    flexDirection: 'column',
+    window: 260
+  }
+
+  const cssTelaOper = {
+    fontSize: 25,
+    color:'#000',
+    height: 20
+  }
+
+  const cssTelaRes = {
+    fontSize: 50,
+    color:'#000',
+    marginLeft: 100
+  }
+
+  const cssBtn = {
+    fontSize: 30,
+    height: 75,
+    width: 75,
+    padding: 20,
+    backgrounColor: '#fff',
+    color: '#000',
+    borderColor: '#000',
+    textAlign: 'center',
+    outLine: 'none',
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div style={cssConteiner}>
+        <h3>CALCULADORA</h3>
+        {Tela(valorTela, resultado)}
+        <div style={cssBotoes}>
+          {Btn('AC', limparMemoria)}
+          {Btn('(', () => addDigitoTela('('))}
+          {Btn(')', () => addDigitoTela(')'))}
+          {Btn('/', () => addDigitoTela('/'))}
+          {Btn('7', () => addDigitoTela('7'))}
+          {Btn('8', () => addDigitoTela('8'))}
+          {Btn('9', () => addDigitoTela('9'))}
+          {Btn('*', () => addDigitoTela('*'))}
+          {Btn('4', () => addDigitoTela('4'))}
+          {Btn('5', () => addDigitoTela('5'))}
+          {Btn('6', () => addDigitoTela('6'))}
+          {Btn('-', () => addDigitoTela('-'))}
+          {Btn('1', () => addDigitoTela('1'))}
+          {Btn('2', () => addDigitoTela('2'))}
+          {Btn('3', () => addDigitoTela('3'))}
+          {Btn('+', () => addDigitoTela('+'))}
+          {Btn('0', () => addDigitoTela('0'))}
+          {Btn('.', () => addDigitoTela('.'))}
+          {Btn('<<', () => Operacao('bs'))}
+          {Btn('=', () => Operacao('='))}
+        </div>
+      </div>
+    </>
   );
 }
-
-export default App;
